@@ -29,7 +29,8 @@ public class sharkClientHdfs {
         Connection con = DriverManager.getConnection("jdbc:hive://10.100.5.109:10000/default", "", "");
         String hdfsURI1 = "'hdfs://localhost:54310/niranda/DEBSdata'";
         String hdfsURI2 = "'hdfs://localhost:54310/niranda/DEBSdataCopy'";
-        String datafile = "'file:///media/niranda/data/projects/hiveToShark/data/sorted400M.txt'";
+//        String datafile = "'file:///media/niranda/data/projects/hiveToShark/data/sorted400M.txt'";
+        String datafile = "'file:///media/niranda/data/projects/hiveToShark/data/doc1.txt'";
 
 
         /**
@@ -52,31 +53,45 @@ public class sharkClientHdfs {
         query = "insert overwrite table TableData1 select col1, col2, col3, col4, col5, col6, col7 FROM TableData";
         executeQuery(query, con);*/
 
-//        query = "create table if not exists tabledata (col1 string)";
-//        executeQuery(query, con);
-//
-//        query = "LOAD DATA local INPATH "+datafile+" overwrite into table tabledata";
-//        executeQuery(query, con);
-
-        query = "create table if not exists dataFormatted (id bigint, " +
-                "timestamp int, " +
-                "value float, "+
-                "measure_type boolean, " +
-                "plug_id int, " +
-                "household_id int, " +
-                "house_id int)";
+        query = "drop table if exists tabledata";
+        executeQuery(query, con);
+        query = "drop table if exists tabletemp";
         executeQuery(query, con);
 
-        query = "insert overwrite table dataFormatted" +
-                "SELECT" +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){1}', 1) id," +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){2}', 1) timestamp," +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){3}', 1) value" +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){4}', 1) measure_type" +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){5}', 1) plug_id" +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){6}', 1) household_id" +
-                "  regexp_extract(col1, '^(?:([^,]*)\\,?){7}', 1) house_id" +
-                "from tabledata";
+        query = "create table if not exists tabledata (col1 string)";
+        executeQuery(query, con);
+
+        query = "LOAD DATA local INPATH "+datafile+" overwrite into table tabledata";
+        executeQuery(query, con);
+//
+//        query = "create table if not exists dataFormatted (id bigint, " +
+//                "timestamp int, " +
+//                "value float, " +
+//                "measure_type boolean, " +
+//                "plug_id int, " +
+//                "household_id int, " +
+//                "house_id int)";
+//        executeQuery(query, con);
+//
+//        query = "insert overwrite table dataFormatted " +
+//                "SELECT " +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){1}', 1) id," +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){2}', 1) timestamp," +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){3}', 1) value," +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){4}', 1) measure_type," +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){5}', 1) plug_id," +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){6}', 1) household_id," +
+//                "  regexp_extract(col1, '^(?:([^,]*)\\,?){7}', 1) house_id " +
+//                "from tabledata " ;
+//        executeQuery(query, con);
+
+        query = "create table if not exists tabletemp (col1 string)";
+        executeQuery(query, con);
+
+        query = "insert overwrite table tabletemp " +
+                "SELECT " +
+                "col1 "+
+                "from tabledata " ;
         executeQuery(query, con);
 
         System.out.println("DONE!");
@@ -84,6 +99,7 @@ public class sharkClientHdfs {
 
     public static void executeQuery(String query, Connection con) {
         long start, end;
+        float dur;
         ResultSet result = null;
         Statement stmt = null;
         try {
@@ -92,7 +108,7 @@ public class sharkClientHdfs {
             e.printStackTrace();
         }
 
-        System.out.println(query);
+//        System.out.println(query);
         start = System.nanoTime();
         try {
             result = stmt.executeQuery(query);
@@ -100,6 +116,9 @@ public class sharkClientHdfs {
             e.printStackTrace();
         }
         end = System.nanoTime();
-        System.out.println(result.toString() + " Elapsed time: " + (end - start));
+        dur = (float) (end - start);
+        dur = dur / (1000000);
+//        System.out.println(result.toString() + " Elapsed time: " + dur + "ms");
+        System.out.println(query.substring(0,20) + " Elapsed time: " + dur + "ms");
     }
 }

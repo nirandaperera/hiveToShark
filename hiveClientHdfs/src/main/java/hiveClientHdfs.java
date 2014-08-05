@@ -25,7 +25,28 @@ public class hiveClientHdfs {
         Connection con = DriverManager.getConnection("jdbc:hive://0.0.0.0:10001/default", "", "");
 //        Statement stmt = con.createStatement();
 
+        String datafile = "'file:///media/niranda/data/projects/hiveToShark/data/doc1.txt'";
+
+        String tbl_attrib = "col1 STRING,col2 STRING,col3 STRING,col4 STRING,col5 STRING,col6 STRING, col7 STRING";
+
+        query = "drop table if exists tabledatahive";
+        executeQuery(query, con);
+        query = "drop table if exists tabletemphive";
+        executeQuery(query, con);
+
         query = "create table if not exists tabledatahive (col1 string)";
+        executeQuery(query, con);
+
+        query = "LOAD DATA local INPATH "+datafile+" overwrite into table tabledatahive";
+        executeQuery(query, con);
+
+        query = "create table if not exists tabletemphive (col1 string)";
+        executeQuery(query, con);
+
+        query = "insert overwrite table tabletemphive " +
+                "SELECT " +
+                "col1 "+
+                "from tabledatahive " ;
         executeQuery(query, con);
 
 
@@ -35,6 +56,7 @@ public class hiveClientHdfs {
 
     public static void executeQuery(String query, Connection con) {
         long start, end;
+        float dur;
         ResultSet result = null;
         Statement stmt = null;
         try {
@@ -43,7 +65,7 @@ public class hiveClientHdfs {
             e.printStackTrace();
         }
 
-        System.out.println(query);
+//        System.out.println(query);
         start = System.nanoTime();
         try {
             result = stmt.executeQuery(query);
@@ -51,6 +73,8 @@ public class hiveClientHdfs {
             e.printStackTrace();
         }
         end = System.nanoTime();
-        System.out.println(result.toString() + " Elapsed time: " + (end - start));
+        dur = (float) (end - start);
+        dur = dur / (1000000);
+        System.out.println(query.substring(0,20) + " Elapsed time: " + dur + "ms");
     }
 }
