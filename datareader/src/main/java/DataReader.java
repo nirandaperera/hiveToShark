@@ -1,14 +1,9 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by niranda on 8/6/14.
  */
-public class dataReader {
+public class DataReader {
 
     public static void main(String[] args) {
 
@@ -17,6 +12,14 @@ public class dataReader {
         String outDir = "/home/niranda/projects/hiveToShark/data/";
 
         int lineLimits[] = {100, 1000, 10000, 100000, 1000000};
+
+        createFiles(inFile, outDir, lineLimits);
+
+        System.out.println("DONE!");
+
+    }
+
+    public static void createFiles(String inFile, String outDir, int[] lineLimits) {
 
         BufferedReader br = null;
         try {
@@ -28,7 +31,15 @@ public class dataReader {
         try {
 
             for (int j = 0; j < lineLimits.length; j++) {
-                BufferedWriter fw = new BufferedWriter(new FileWriter(outDir + "doc" + lineLimits[j]+ ".txt"));
+                String filename = outDir + "doc" + lineLimits[j] + ".txt";
+                File file = new File(filename);
+
+                if (file.exists()) {
+                    System.out.println("doc with lines " + lineLimits[j] + " EXISTS!");
+                    continue;
+                }
+
+                BufferedWriter fw = new BufferedWriter(new FileWriter(filename));
                 String line;
                 int i = 0;
                 try {
@@ -41,15 +52,12 @@ public class dataReader {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("doc with lines "+ lineLimits[j]+" DONE!");
+                System.out.println("doc with lines " + lineLimits[j] + " DONE!");
             }
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        System.out.println("DONE!");
-
     }
+
 }

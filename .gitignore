@@ -3,6 +3,7 @@
 .idea
 target
 *.iml
+data/
 
 #netbeans ignore personal stuff
 
