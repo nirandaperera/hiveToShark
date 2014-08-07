@@ -2,8 +2,15 @@
  * Created by niranda on 8/6/14.
  */
 
-import org.jruby.ext.ffi.Struct$i$initialize;
-import org.yecht.Data;
+/**
+ * id â€“ a unique identifier of the measurement [64 bit unsigned integer value]
+ * timestamp â€“ timestamp of measurement (number of seconds since January 1, 1970, 00:00:00 GMT) [32 bit unsigned integer value]
+ * value â€“ the measurement [32 bit floating point]
+ * property â€“ type of the measurement: 0 for work or 1 for load [boolean]
+ * plug_id â€“ a unique identifier (within a household) of the smart plug [32 bit unsigned integer value]
+ * household_id â€“ a unique identifier of a household (within a house) where the plug is located [32 bit unsigned integer value]
+ * house_id â€“ a unique identifier of a house where the household with the plug is located [32 bit unsigned integer value]
+ */
 
 import java.io.*;
 import java.sql.Connection;
@@ -11,10 +18,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class HiveSharkPerformanceEvaluator {
 
     private static String driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
+    private static ArrayList<String> queries = new ArrayList<String>();
 
     public static void main(String[] args) throws SQLException {
 
@@ -25,10 +34,6 @@ public class HiveSharkPerformanceEvaluator {
         //int lineLimits[] = {100};
 
         DataReader.createFiles(inFile, outDir, lineLimits);
-
-
-        //Run the queries
-        String query;
 
         try {
             Class.forName(driverName);
@@ -45,7 +50,7 @@ public class HiveSharkPerformanceEvaluator {
         File[] listOfFiles = folder.listFiles();
 
         try {
-            String logPath = "logs/log2.txt";
+            String logPath = "logs/log3.txt";
 
             File f = new File(logPath);
             if (f.exists() && !f.isDirectory()) {
@@ -63,17 +68,19 @@ public class HiveSharkPerformanceEvaluator {
                 String filePath = "'file://" + listOfFiles[i].getPath() + "'";
                 String fileName = listOfFiles[i].getName();
                 String lines = fileName.substring(3, fileName.length() - 4);
-//            System.out.println(lines);
 
                 System.out.println("**** FILE WITH " + lines + " LINES ****");
                 writer.print(lines + ", ");
 
+                // EXECUTE QUERIES
+                String query;
 
+                //**** DDL OPERATIONS **** (Data Definition)
                 //DROP DATABASE
-                query = "drop database if exists hivedb" + lines;
+                query = "drop database if exists hivedb" + lines + " cascade";
                 executeQuery(query, conHive, writer);
 
-                query = "drop database if exists sharkdb" + lines;
+                query = "drop database if exists sharkdb" + lines + " cascade";
                 executeQuery(query, conShark, writer);
 
 
@@ -85,32 +92,29 @@ public class HiveSharkPerformanceEvaluator {
                 executeQuery(query, conShark, writer);
 
 
-/*
-                //DROP TABLES
-                query = "drop table if exists hivedb.data" + lines;
-                executeQuery(query, conHive, writer);
-                query = "drop table if exists hivedb.datatemp" + lines;
-                executeQuery(query, conHive, writer);
-
-                query = "drop table if exists sharkdb.data" + lines;
-                executeQuery(query, conShark, writer);
-                query = "drop table if exists sharkdb.datatemp" + lines;
-                executeQuery(query, conShark, writer);
-*/
-
-
                 //CREATE TABLES
-                query = "create table if not exists hivedb.data" + lines + " (col1 string)";
+                String tbl_props = "id bigint, " +
+                        "time_stamp int, " +
+                        "value float, " +
+                        "measure_type boolean, " +
+                        "plug_id int, " +
+                        "household_id int, " +
+                        "house_id int ";
+
+                query = "create table if not exists hivedb.data" + lines + " (" + tbl_props + ") " +
+                        "row format delimited FIELDS TERMINATED BY ','";
                 executeQuery(query, conHive, writer);
-                query = "create table if not exists hivedb.datatemp" + lines + " (col1 string)";
+                query = "create table if not exists hivedb.data0_" + lines + "(id bigint)";
                 executeQuery(query, conHive, writer);
 
-                query = "create table if not exists sharkdb.data" + lines + " (col1 string)";
+                query = "create table if not exists sharkdb.data" + lines + " (" + tbl_props + ") " +
+                        "row format delimited FIELDS TERMINATED BY ','";
                 executeQuery(query, conShark, writer);
-                query = "create table if not exists sharkdb.datatemp" + lines + " (col1 string)";
+                query = "create table if not exists sharkdb.data0_" + lines + "(id bigint)";
                 executeQuery(query, conShark, writer);
 
 
+                // **** DML OPERATIONS**** (Data Manupulation)
                 //LOAD TABLES
                 query = "LOAD DATA local INPATH " + filePath + " overwrite into table hivedb.data" + lines;
                 executeQuery(query, conHive, writer);
@@ -119,24 +123,32 @@ public class HiveSharkPerformanceEvaluator {
                 executeQuery(query, conShark, writer);
 
 
+                // **** SQL OPERATIONS ****
                 //SELECT AND INSERT
-                query = "insert overwrite table hivedb.datatemp" + lines +
-                        " SELECT " +
-                        "col1 " +
-                        "from hivedb.data" + lines;
+                query = "INSERT overwrite table hivedb.data0_" + lines +
+                        " SELECT" +
+                        " id" +
+                        " from hivedb.data" + lines;
                 executeQuery(query, conHive, writer);
 
-                query = "insert overwrite table sharkdb.datatemp" + lines +
-                        " SELECT " +
-                        "col1 " +
-                        "from sharkdb.data" + lines;
+                query = "INSERT overwrite table sharkdb.data0_" + lines +
+                        " SELECT" +
+                        " id" +
+                        " from sharkdb.data" + lines;
                 executeQuery(query, conShark, writer);
+
+
+                //INSERT AND SELECT WITH split
+                //additional table creation
+
 
                 System.out.println("**** FILE WITH " + lines + " LINES: DONE ****");
 
                 writer.println();
+
             }
 
+            writer.println(queries.toString());
             writer.close();
 
         } catch (IOException e) {
@@ -151,6 +163,8 @@ public class HiveSharkPerformanceEvaluator {
     public static void executeQuery(String query, Connection con, PrintWriter writer) {
         long start, end;
         float dur;
+
+        System.out.print(query.substring(0, 20));
 
         Statement stmt = null;
         try {
@@ -170,9 +184,9 @@ public class HiveSharkPerformanceEvaluator {
         dur = (float) (end - start);
         dur = dur / (1000000);
 
-
-//        System.out.println(result.toString() + " Elapsed time: " + dur + "ms");
-        System.out.println(query.substring(0, 20) + " Elapsed time: " + dur + "ms");
+        System.out.print(" Result: " + result.toString().substring(0, 20) + " Elapsed time: " + dur + "ms");
+        System.out.println();
+        queries.add(query + "n");
         writer.print(dur + ", ");
     }
 
