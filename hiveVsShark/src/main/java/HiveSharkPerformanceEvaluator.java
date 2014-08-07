@@ -45,7 +45,16 @@ public class HiveSharkPerformanceEvaluator {
         File[] listOfFiles = folder.listFiles();
 
         try {
-            PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("log.txt")));
+            String logPath = "logs/log2.txt";
+
+            File f = new File(logPath);
+            if (f.exists() && !f.isDirectory()) {
+                System.out.println("log file exists! enter new log file name");
+                return;
+            }
+
+            PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(logPath)));
+
 
             for (int i = 0; i < listOfFiles.length; i++) {
 
@@ -57,52 +66,73 @@ public class HiveSharkPerformanceEvaluator {
 //            System.out.println(lines);
 
                 System.out.println("**** FILE WITH " + lines + " LINES ****");
-                //DROP TABLES
-                query = "drop table if exists hive" + lines;
-                executeQuery(query, conHive, writer);
-                query = "drop table if exists hivetemp" + lines;
+                writer.print(lines + ", ");
+
+
+                //DROP DATABASE
+                query = "drop database if exists hivedb" + lines;
                 executeQuery(query, conHive, writer);
 
-                query = "drop table if exists shark" + lines;
+                query = "drop database if exists sharkdb" + lines;
                 executeQuery(query, conShark, writer);
-                query = "drop table if exists sharktemp" + lines;
+
+
+                //CREATE DATABASE
+                query = "create database if not exists hivedb";
+                executeQuery(query, conHive, writer);
+
+                query = "create database if not exists sharkdb";
                 executeQuery(query, conShark, writer);
+
+
+/*
+                //DROP TABLES
+                query = "drop table if exists hivedb.data" + lines;
+                executeQuery(query, conHive, writer);
+                query = "drop table if exists hivedb.datatemp" + lines;
+                executeQuery(query, conHive, writer);
+
+                query = "drop table if exists sharkdb.data" + lines;
+                executeQuery(query, conShark, writer);
+                query = "drop table if exists sharkdb.datatemp" + lines;
+                executeQuery(query, conShark, writer);
+*/
 
 
                 //CREATE TABLES
-                query = "create table if not exists hive" + lines + " (col1 string)";
+                query = "create table if not exists hivedb.data" + lines + " (col1 string)";
                 executeQuery(query, conHive, writer);
-                query = "create table if not exists hivetemp" + lines + " (col1 string)";
+                query = "create table if not exists hivedb.datatemp" + lines + " (col1 string)";
                 executeQuery(query, conHive, writer);
 
-                query = "create table if not exists shark" + lines + " (col1 string)";
+                query = "create table if not exists sharkdb.data" + lines + " (col1 string)";
                 executeQuery(query, conShark, writer);
-                query = "create table if not exists sharktemp" + lines + " (col1 string)";
+                query = "create table if not exists sharkdb.datatemp" + lines + " (col1 string)";
                 executeQuery(query, conShark, writer);
 
 
                 //LOAD TABLES
-                query = "LOAD DATA local INPATH " + filePath + " overwrite into table hive" + lines;
+                query = "LOAD DATA local INPATH " + filePath + " overwrite into table hivedb.data" + lines;
                 executeQuery(query, conHive, writer);
 
-                query = "LOAD DATA local INPATH " + filePath + " overwrite into table shark" + lines;
+                query = "LOAD DATA local INPATH " + filePath + " overwrite into table sharkdb.data" + lines;
                 executeQuery(query, conShark, writer);
 
 
                 //SELECT AND INSERT
-                query = "insert overwrite table hivetemp" + lines +
+                query = "insert overwrite table hivedb.datatemp" + lines +
                         " SELECT " +
                         "col1 " +
-                        "from hive" + lines;
+                        "from hivedb.data" + lines;
                 executeQuery(query, conHive, writer);
 
-                query = "insert overwrite table sharktemp" + lines +
+                query = "insert overwrite table sharkdb.datatemp" + lines +
                         " SELECT " +
                         "col1 " +
-                        "from shark" + lines;
+                        "from sharkdb.data" + lines;
                 executeQuery(query, conShark, writer);
 
-                System.out.println("**** FILE WITH " + lines + "LINES: DONE ****");
+                System.out.println("**** FILE WITH " + lines + " LINES: DONE ****");
 
                 writer.println();
             }
@@ -143,7 +173,7 @@ public class HiveSharkPerformanceEvaluator {
 
 //        System.out.println(result.toString() + " Elapsed time: " + dur + "ms");
         System.out.println(query.substring(0, 20) + " Elapsed time: " + dur + "ms");
-        writer.println(query + " = " + dur);
+        writer.print(dur + ", ");
     }
 
 }
