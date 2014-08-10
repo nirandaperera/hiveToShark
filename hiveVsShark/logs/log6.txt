@@ -1,0 +1,31 @@
+10000000, 212.61008, 439.3194, 164.30618, 335.4071, 
+100000, 46.28946, 64.66796, 127.34144, 191.74591, 
+1000000, 47.342, 55.795197, 131.84976, 212.60643, 
+10000, 38.047962, 47.393925, 130.82385, 198.89922, 
+100, 45.774307, 44.87776, 126.20622, 189.68289, 
+1000, 71.56845, 77.157646, 120.27173, 194.41174, 
+[create table if not exists hivedb.house10000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house10000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house100.txt' overwrite into table hivedb.house10000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house100.txt' overwrite into table sharkdb.house10000000
+, create table if not exists hivedb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house1000000.txt' overwrite into table hivedb.house100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house1000000.txt' overwrite into table sharkdb.house100000
+, create table if not exists hivedb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house10000.txt' overwrite into table hivedb.house1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house10000.txt' overwrite into table sharkdb.house1000000
+, create table if not exists hivedb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house100000.txt' overwrite into table hivedb.house10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house100000.txt' overwrite into table sharkdb.house10000
+, create table if not exists hivedb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house1000.txt' overwrite into table hivedb.house100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house1000.txt' overwrite into table sharkdb.house100
+, create table if not exists hivedb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house100000000.txt' overwrite into table hivedb.house1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/house/house100000000.txt' overwrite into table sharkdb.house1000
+]

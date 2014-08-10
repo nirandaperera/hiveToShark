@@ -1,0 +1,136 @@
+100, 153.37329, 258.15723, 8.943324, 21.591322, 357.7885, 32.552933, 47.70711, 23.161997, 15.73656, 23.929972, 321.80643, 378.41266, 145.19865, 230.70724, 20069.938, 801.4027, 32540.975, 652.6418, 20460.46, 529.4904, 32522.54, 354.0775, 7.95744, 32578.77, 36.400192, 450.9339, 
+1000, 3.426129, 24.463388, 4.755693, 17.340996, 15.61263, 13.622858, 29.160023, 25.181639, 15.591369, 25.451775, 133.54788, 206.95381, 124.07162, 189.57193, 19763.559, 362.49445, 32449.096, 578.45844, 20368.078, 292.9152, 32429.736, 281.9511, 15.283987, 33447.688, 27.79805, 341.83972, 
+10000, 3.63261, 21.197124, 5.460326, 21.839607, 17.11871, 12.447147, 23.43256, 23.188063, 13.749624, 24.005457, 126.18828, 195.96132, 141.46614, 183.93542, 19696.033, 310.12344, 32406.625, 652.5335, 20381.889, 286.3079, 33421.67, 304.44443, 4.456727, 32423.428, 36.632175, 422.9923, 
+100000, 2.936866, 24.992867, 3.503591, 14.155965, 13.757277, 13.023743, 24.124905, 22.381311, 13.242019, 23.189943, 126.29997, 210.45644, 101.73184, 191.70839, 19643.352, 362.53607, 32425.615, 1121.5564, 20354.639, 381.7277, 32432.041, 302.15594, 5.605234, 32442.064, 18.432505, 745.53064, 
+1000000, 4.428714, 22.196714, 3.462169, 13.070781, 12.854297, 14.760146, 19.202446, 18.108316, 11.017069, 24.318716, 254.15831, 296.27396, 121.055016, 152.8399, 19706.258, 1088.0841, 35407.99, 7275.155, 19358.438, 1628.2937, 31435.596, 464.0704, 4.411983, 35475.723, 23.471912, 4790.011, 
+[drop database if exists hivedb100 cascade
+, drop database if exists sharkdb100 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data100 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_100(id bigint)
+, create table if not exists sharkdb.data100 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_100(id bigint)
+, create table if not exists hivedb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data100.txt' overwrite into table hivedb.data100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data100.txt' overwrite into table sharkdb.data100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100.txt' overwrite into table hivedb.house100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100.txt' overwrite into table sharkdb.house100
+, INSERT overwrite table hivedb.data0_100 SELECT id from hivedb.data100
+, INSERT overwrite table sharkdb.data0_100 SELECT id from sharkdb.data100
+, SELECT * FROM hivedb.data100 ORDER BY house_id
+, SELECT * FROM sharkdb.data100 ORDER BY house_id
+, SELECT * FROM hivedb.data100 WHERE value >= 5
+, SELECT * FROM sharkdb.data100 WHERE value >= 5
+, SELECT COUNT (*) FROM hivedb.data100
+, SELECT COUNT (*) FROM sharkdb.data100
+, USE hivedb
+, SELECT data100.*, house100.house_name FROM data100 JOIN house100 ON ( data100.house_id = house100.house_id)
+, USE sharkdb
+, SELECT data100.*, house100.house_name FROM data100 JOIN house100 ON ( data100.house_id = house100.house_id)
+, drop database if exists hivedb1000 cascade
+, drop database if exists sharkdb1000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data1000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_1000(id bigint)
+, create table if not exists sharkdb.data1000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_1000(id bigint)
+, create table if not exists hivedb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000.txt' overwrite into table hivedb.data1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000.txt' overwrite into table sharkdb.data1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000.txt' overwrite into table hivedb.house1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000.txt' overwrite into table sharkdb.house1000
+, INSERT overwrite table hivedb.data0_1000 SELECT id from hivedb.data1000
+, INSERT overwrite table sharkdb.data0_1000 SELECT id from sharkdb.data1000
+, SELECT * FROM hivedb.data1000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000 ORDER BY house_id
+, SELECT * FROM hivedb.data1000 WHERE value >= 5
+, SELECT * FROM sharkdb.data1000 WHERE value >= 5
+, SELECT COUNT (*) FROM hivedb.data1000
+, SELECT COUNT (*) FROM sharkdb.data1000
+, USE hivedb
+, SELECT data1000.*, house1000.house_name FROM data1000 JOIN house1000 ON ( data1000.house_id = house1000.house_id)
+, USE sharkdb
+, SELECT data1000.*, house1000.house_name FROM data1000 JOIN house1000 ON ( data1000.house_id = house1000.house_id)
+, drop database if exists hivedb10000 cascade
+, drop database if exists sharkdb10000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data10000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_10000(id bigint)
+, create table if not exists sharkdb.data10000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_10000(id bigint)
+, create table if not exists hivedb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data10000.txt' overwrite into table hivedb.data10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data10000.txt' overwrite into table sharkdb.data10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house10000.txt' overwrite into table hivedb.house10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house10000.txt' overwrite into table sharkdb.house10000
+, INSERT overwrite table hivedb.data0_10000 SELECT id from hivedb.data10000
+, INSERT overwrite table sharkdb.data0_10000 SELECT id from sharkdb.data10000
+, SELECT * FROM hivedb.data10000 ORDER BY house_id
+, SELECT * FROM sharkdb.data10000 ORDER BY house_id
+, SELECT * FROM hivedb.data10000 WHERE value >= 5
+, SELECT * FROM sharkdb.data10000 WHERE value >= 5
+, SELECT COUNT (*) FROM hivedb.data10000
+, SELECT COUNT (*) FROM sharkdb.data10000
+, USE hivedb
+, SELECT data10000.*, house10000.house_name FROM data10000 JOIN house10000 ON ( data10000.house_id = house10000.house_id)
+, USE sharkdb
+, SELECT data10000.*, house10000.house_name FROM data10000 JOIN house10000 ON ( data10000.house_id = house10000.house_id)
+, drop database if exists hivedb100000 cascade
+, drop database if exists sharkdb100000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data100000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_100000(id bigint)
+, create table if not exists sharkdb.data100000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_100000(id bigint)
+, create table if not exists hivedb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data100000.txt' overwrite into table hivedb.data100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data100000.txt' overwrite into table sharkdb.data100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000.txt' overwrite into table hivedb.house100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000.txt' overwrite into table sharkdb.house100000
+, INSERT overwrite table hivedb.data0_100000 SELECT id from hivedb.data100000
+, INSERT overwrite table sharkdb.data0_100000 SELECT id from sharkdb.data100000
+, SELECT * FROM hivedb.data100000 ORDER BY house_id
+, SELECT * FROM sharkdb.data100000 ORDER BY house_id
+, SELECT * FROM hivedb.data100000 WHERE value >= 5
+, SELECT * FROM sharkdb.data100000 WHERE value >= 5
+, SELECT COUNT (*) FROM hivedb.data100000
+, SELECT COUNT (*) FROM sharkdb.data100000
+, USE hivedb
+, SELECT data100000.*, house100000.house_name FROM data100000 JOIN house100000 ON ( data100000.house_id = house100000.house_id)
+, USE sharkdb
+, SELECT data100000.*, house100000.house_name FROM data100000 JOIN house100000 ON ( data100000.house_id = house100000.house_id)
+, drop database if exists hivedb1000000 cascade
+, drop database if exists sharkdb1000000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data1000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_1000000(id bigint)
+, create table if not exists sharkdb.data1000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_1000000(id bigint)
+, create table if not exists hivedb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000000.txt' overwrite into table hivedb.data1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000000.txt' overwrite into table sharkdb.data1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000000.txt' overwrite into table hivedb.house1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000000.txt' overwrite into table sharkdb.house1000000
+, INSERT overwrite table hivedb.data0_1000000 SELECT id from hivedb.data1000000
+, INSERT overwrite table sharkdb.data0_1000000 SELECT id from sharkdb.data1000000
+, SELECT * FROM hivedb.data1000000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000000 ORDER BY house_id
+, SELECT * FROM hivedb.data1000000 WHERE value >= 5
+, SELECT * FROM sharkdb.data1000000 WHERE value >= 5
+, SELECT COUNT (*) FROM hivedb.data1000000
+, SELECT COUNT (*) FROM sharkdb.data1000000
+, USE hivedb
+, SELECT data1000000.*, house1000000.house_name FROM data1000000 JOIN house1000000 ON ( data1000000.house_id = house1000000.house_id)
+, USE sharkdb
+, SELECT data1000000.*, house1000000.house_name FROM data1000000 JOIN house1000000 ON ( data1000000.house_id = house1000000.house_id)
+]

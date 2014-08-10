@@ -1,0 +1,91 @@
+10000000, 150.47511, 230.23883, 7.112795, 41.5358, 394.9366, 37.309753, 51.074024, 23.791304, 15.899062, 23.436464, 1401.8645, 1412.3195, 131.71953, 217.34929, 
+100000, 3.561328, 24.574663, 6.77785, 19.451056, 15.647503, 14.382011, 27.826168, 25.147907, 15.660819, 27.359728, 176.72943, 268.75073, 127.618034, 223.7709, 
+1000000, 3.664289, 25.18954, 6.862084, 20.033125, 15.127392, 17.856895, 27.683184, 24.097204, 16.035076, 23.596825, 235.81462, 341.58237, 125.07569, 210.5701, 
+10000, 3.491396, 18.436745, 4.021801, 15.962739, 13.31672, 13.591394, 25.516752, 23.889805, 15.079824, 23.718197, 142.03429, 203.73131, 107.99648, 182.27942, 
+100, 3.099313, 31.620407, 3.576948, 14.994682, 16.69478, 13.163217, 22.606705, 29.46292, 12.051896, 25.405746, 128.698, 188.0074, 128.14468, 180.30125, 
+1000, 2.940065, 30.779222, 7.589035, 22.014444, 12.443578, 12.206476, 24.205936, 22.37366, 14.938015, 25.968826, 111.32149, 203.7464, 96.715225, 193.81564, 
+[drop database if exists hivedb10000000 cascade
+, drop database if exists sharkdb10000000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data10000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_10000000(id bigint)
+, create table if not exists sharkdb.data10000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_10000000(id bigint)
+, create table if not exists hivedb.house10000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house10000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc10000000.txt' overwrite into table hivedb.data10000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc10000000.txt' overwrite into table sharkdb.data10000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100.txt' overwrite into table hivedb.house10000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100.txt' overwrite into table sharkdb.house10000000
+, drop database if exists hivedb100000 cascade
+, drop database if exists sharkdb100000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data100000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_100000(id bigint)
+, create table if not exists sharkdb.data100000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_100000(id bigint)
+, create table if not exists hivedb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc100000.txt' overwrite into table hivedb.data100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc100000.txt' overwrite into table sharkdb.data100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000000.txt' overwrite into table hivedb.house100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000000.txt' overwrite into table sharkdb.house100000
+, drop database if exists hivedb1000000 cascade
+, drop database if exists sharkdb1000000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data1000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_1000000(id bigint)
+, create table if not exists sharkdb.data1000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_1000000(id bigint)
+, create table if not exists hivedb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc1000000.txt' overwrite into table hivedb.data1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc1000000.txt' overwrite into table sharkdb.data1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house10000.txt' overwrite into table hivedb.house1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house10000.txt' overwrite into table sharkdb.house1000000
+, drop database if exists hivedb10000 cascade
+, drop database if exists sharkdb10000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data10000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_10000(id bigint)
+, create table if not exists sharkdb.data10000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_10000(id bigint)
+, create table if not exists hivedb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc10000.txt' overwrite into table hivedb.data10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc10000.txt' overwrite into table sharkdb.data10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000.txt' overwrite into table hivedb.house10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000.txt' overwrite into table sharkdb.house10000
+, drop database if exists hivedb100 cascade
+, drop database if exists sharkdb100 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data100 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_100(id bigint)
+, create table if not exists sharkdb.data100 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_100(id bigint)
+, create table if not exists hivedb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc100.txt' overwrite into table hivedb.data100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc100.txt' overwrite into table sharkdb.data100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000.txt' overwrite into table hivedb.house100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000.txt' overwrite into table sharkdb.house100
+, drop database if exists hivedb1000 cascade
+, drop database if exists sharkdb1000 cascade
+, create database if not exists hivedb
+, create database if not exists sharkdb
+, create table if not exists hivedb.data1000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists hivedb.data0_1000(id bigint)
+, create table if not exists sharkdb.data1000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.data0_1000(id bigint)
+, create table if not exists hivedb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc1000.txt' overwrite into table hivedb.data1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/doc1000.txt' overwrite into table sharkdb.data1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000000.txt' overwrite into table hivedb.house1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000000.txt' overwrite into table sharkdb.house1000
+]

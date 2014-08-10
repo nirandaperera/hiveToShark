@@ -1,0 +1,26 @@
+100000, 32510.092, 2912.6099, 21398.18, 761.9593, 
+1000000, 34454.848, 7847.0195, 19401.336, 1845.0167, 
+10000, 31490.232, 612.04956, 20418.229, 332.42105, 
+100, 32435.447, 477.2122, 20363.393, 297.68796, 
+1000, 33424.1, 463.90173, 20396.72, 289.22525, 
+[SELECT * FROM hivedb.data100000 ORDER BY house_id
+, SELECT * FROM sharkdb.data100000 ORDER BY house_id
+, SELECT * FROM hivedb.data100000 WHERE value >= 5
+, SELECT * FROM sharkdb.data100000 WHERE value >= 5
+, SELECT * FROM hivedb.data1000000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000000 ORDER BY house_id
+, SELECT * FROM hivedb.data1000000 WHERE value >= 5
+, SELECT * FROM sharkdb.data1000000 WHERE value >= 5
+, SELECT * FROM hivedb.data10000 ORDER BY house_id
+, SELECT * FROM sharkdb.data10000 ORDER BY house_id
+, SELECT * FROM hivedb.data10000 WHERE value >= 5
+, SELECT * FROM sharkdb.data10000 WHERE value >= 5
+, SELECT * FROM hivedb.data100 ORDER BY house_id
+, SELECT * FROM sharkdb.data100 ORDER BY house_id
+, SELECT * FROM hivedb.data100 WHERE value >= 5
+, SELECT * FROM sharkdb.data100 WHERE value >= 5
+, SELECT * FROM hivedb.data1000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000 ORDER BY house_id
+, SELECT * FROM hivedb.data1000 WHERE value >= 5
+, SELECT * FROM sharkdb.data1000 WHERE value >= 5
+]
