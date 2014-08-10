@@ -16,7 +16,7 @@ public class DataReader {
 
         int lineLimits[] = {100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
 
-//        createFiles(inFile, outDirData, lineLimits);
+        createFiles(inFile, outDirData, lineLimits);
         createAdditionalFiles(inFile, outDirAdd, lineLimits);
 
         System.out.println("DONE!");
@@ -40,7 +40,7 @@ public class DataReader {
                 }
 
 
-                String filename = outDir + "doc" + lineLimits[j] + ".txt";
+                String filename = outDir + "data" + lineLimits[j] + ".txt";
                 File file = new File(filename);
 
 

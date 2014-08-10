@@ -49,15 +49,15 @@ public class HiveSharkPerformanceEvaluator {
         Connection conShark = DriverManager.getConnection("jdbc:hive://0.0.0.0:10000/default", "", "");
         Connection conHive = DriverManager.getConnection("jdbc:hive://0.0.0.0:10001/default", "", "");
 
-        File folder = new File(outDir);
-        File[] listOfFiles = folder.listFiles();
-
-        File folder1 = new File(outDir1);
-        File[] listOfFiles1 = folder1.listFiles();
+//        File folder = new File(outDir);
+//        File[] listOfFiles = folder.listFiles();
+//
+//        File folder1 = new File(outDir1);
+//        File[] listOfFiles1 = folder1.listFiles();
 
 
         try {
-            String logPath = "logs/log7.txt";
+            String logPath = "logs/log8.txt";
 
             File f = new File(logPath);
             if (f.exists() && !f.isDirectory()) {
@@ -68,14 +68,16 @@ public class HiveSharkPerformanceEvaluator {
             PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(logPath)));
 
 
-            for (int i = 0; i < listOfFiles.length; i++) {
+            for (int i = 0; i < lineLimits.length; i++) {
 
-//                if (!listOfFiles[i].getName().equalsIgnoreCase("doc100.txt")) continue;
+                if (lineLimits[i]>=10000000) continue;
 
-                String filePath = "'file://" + listOfFiles[i].getPath() + "'";
-                String filePath1 = "'file://" + listOfFiles1[i].getPath() + "'";
-                String fileName = listOfFiles[i].getName();
-                String lines = fileName.substring(3, fileName.length() - 4);
+                String filePath = "'file://" + outDir+"data"+lineLimits[i] + ".txt'";
+//                String fileName = listOfFiles[i].getName();
+
+
+                String filePath1 = "'file://" + outDir1 +"house"+lineLimits[i]+ ".txt'";
+                String lines = Integer.toString(lineLimits[i]);
 
                 // ignore if,
                 if (lines.equalsIgnoreCase("100000000")) continue;
@@ -86,111 +88,111 @@ public class HiveSharkPerformanceEvaluator {
                 // EXECUTE QUERIES
                 String query;
 
-//                //**** DDL OPERATIONS **** (Data Definition)
-//                //DROP DATABASE
-//                query = "drop database if exists hivedb" + lines + " cascade";
-//                executeQuery(query, conHive, writer);
-//
-//                query = "drop database if exists sharkdb" + lines + " cascade";
-//                executeQuery(query, conShark, writer);
-//
-//
-//                //CREATE DATABASE
-//                query = "create database if not exists hivedb";
-//                executeQuery(query, conHive, writer);
-//
-//                query = "create database if not exists sharkdb";
-//                executeQuery(query, conShark, writer);
-//
-//
-//                //CREATE TABLES
-//                String tbl_props = "id bigint, " +
-//                        "time_stamp int, " +
-//                        "value float, " +
-//                        "measure_type boolean, " +
-//                        "plug_id int, " +
-//                        "household_id int, " +
-//                        "house_id int ";
-//
-//                query = "create table if not exists hivedb.data" + lines + " (" + tbl_props + ") " +
-//                        "row format delimited FIELDS TERMINATED BY ','";
-//                executeQuery(query, conHive, writer);
-//                query = "create table if not exists hivedb.data0_" + lines + "(id bigint)";
-//                executeQuery(query, conHive, writer);
-//
-//                query = "create table if not exists sharkdb.data" + lines + " (" + tbl_props + ") " +
-//                        "row format delimited FIELDS TERMINATED BY ','";
-//                executeQuery(query, conShark, writer);
-//                query = "create table if not exists sharkdb.data0_" + lines + "(id bigint)";
-//                executeQuery(query, conShark, writer);
-//
-//                query = "create table if not exists hivedb.house" + lines + " (house_id int, house_name string) " +
-//                        "row format delimited FIELDS TERMINATED BY ','";
-//                executeQuery(query, conHive, writer);
-//
-//                query = "create table if not exists sharkdb.house" + lines + " (house_id int, house_name string) " +
-//                        "row format delimited FIELDS TERMINATED BY ','";
-//                executeQuery(query, conShark, writer);
-//
-//
-//
-//
-//                // **** DML OPERATIONS**** (Data Manupulation)
-//                //LOAD TABLES
-//                query = "LOAD DATA local INPATH " + filePath + " overwrite into table hivedb.data" + lines;
-//                executeQuery(query, conHive, writer);
-//
-//                query = "LOAD DATA local INPATH " + filePath + " overwrite into table sharkdb.data" + lines;
-//                executeQuery(query, conShark, writer);
-//
-//                //LOAD TABLES additional
-//                query = "LOAD DATA local INPATH " + filePath1 +" overwrite into table hivedb.house" + lines;
-//                executeQuery(query, conHive, writer);
-//
-//                query = "LOAD DATA local INPATH " + filePath1 + " overwrite into table sharkdb.house" + lines;
-//                executeQuery(query, conShark, writer);
+                //**** DDL OPERATIONS **** (Data Definition)
+                //DROP DATABASE
+                query = "drop database if exists hivedb" + lines + " cascade";
+                executeQuery(query, conHive, writer);
+
+                query = "drop database if exists sharkdb" + lines + " cascade";
+                executeQuery(query, conShark, writer);
 
 
-//
-//
-//                // **** SQL OPERATIONS ****
-//                //SELECT AND INSERT
-//                query = "INSERT overwrite table hivedb.data0_" + lines +
-//                        " SELECT" +
-//                        " id" +
-//                        " from hivedb.data" + lines;
-//                executeQuery(query, conHive, writer);
-//
-//                query = "INSERT overwrite table sharkdb.data0_" + lines +
-//                        " SELECT" +
-//                        " id" +
-//                        " from sharkdb.data" + lines;
-//                executeQuery(query, conShark, writer);
-//
-//
-//                // ORDER BY
-////                query = "SELECT * FROM hivedb.data" + lines + " ORDER BY house_id, household_id, plug_id, value";
-//                query = "SELECT * FROM hivedb.data" + lines + " ORDER BY house_id";
-//                executeQuery(query, conHive, writer);
-//
-////                query = "SELECT * FROM sharkdb.data" + lines + " ORDER BY house_id, household_id, plug_id, value";
-//                query = "SELECT * FROM sharkdb.data" + lines + " ORDER BY house_id";
-//                executeQuery(query, conShark, writer);
-//
-//
-//                //FILTER
-//                query = "SELECT * FROM hivedb.data" + lines + " WHERE value >= 5";
-//                executeQuery(query, conHive, writer);
-//
-//                query = "SELECT * FROM sharkdb.data" + lines + " WHERE value >= 5";
-//                executeQuery(query, conShark, writer);
-//
-//                //COUNT
-//                query = "SELECT COUNT (*) FROM hivedb.data" + lines;
-//                executeQuery(query, conHive, writer);
-//
-//                query = "SELECT COUNT (*) FROM sharkdb.data" + lines;
-//                executeQuery(query, conShark, writer);
+                //CREATE DATABASE
+                query = "create database if not exists hivedb";
+                executeQuery(query, conHive, writer);
+
+                query = "create database if not exists sharkdb";
+                executeQuery(query, conShark, writer);
+
+
+                //CREATE TABLES
+                String tbl_props = "id bigint, " +
+                        "time_stamp int, " +
+                        "value float, " +
+                        "measure_type boolean, " +
+                        "plug_id int, " +
+                        "household_id int, " +
+                        "house_id int ";
+
+                query = "create table if not exists hivedb.data" + lines + " (" + tbl_props + ") " +
+                        "row format delimited FIELDS TERMINATED BY ','";
+                executeQuery(query, conHive, writer);
+                query = "create table if not exists hivedb.data0_" + lines + "(id bigint)";
+                executeQuery(query, conHive, writer);
+
+                query = "create table if not exists sharkdb.data" + lines + " (" + tbl_props + ") " +
+                        "row format delimited FIELDS TERMINATED BY ','";
+                executeQuery(query, conShark, writer);
+                query = "create table if not exists sharkdb.data0_" + lines + "(id bigint)";
+                executeQuery(query, conShark, writer);
+
+                query = "create table if not exists hivedb.house" + lines + " (house_id int, house_name string) " +
+                        "row format delimited FIELDS TERMINATED BY ','";
+                executeQuery(query, conHive, writer);
+
+                query = "create table if not exists sharkdb.house" + lines + " (house_id int, house_name string) " +
+                        "row format delimited FIELDS TERMINATED BY ','";
+                executeQuery(query, conShark, writer);
+
+
+
+
+                // **** DML OPERATIONS**** (Data Manupulation)
+                //LOAD TABLES
+                query = "LOAD DATA local INPATH " + filePath + " overwrite into table hivedb.data" + lines;
+                executeQuery(query, conHive, writer);
+
+                query = "LOAD DATA local INPATH " + filePath + " overwrite into table sharkdb.data" + lines;
+                executeQuery(query, conShark, writer);
+
+                //LOAD TABLES additional
+                query = "LOAD DATA local INPATH " + filePath1 +" overwrite into table hivedb.house" + lines;
+                executeQuery(query, conHive, writer);
+
+                query = "LOAD DATA local INPATH " + filePath1 + " overwrite into table sharkdb.house" + lines;
+                executeQuery(query, conShark, writer);
+
+
+
+
+                // **** SQL OPERATIONS ****
+                //SELECT AND INSERT
+                query = "INSERT overwrite table hivedb.data0_" + lines +
+                        " SELECT" +
+                        " id" +
+                        " from hivedb.data" + lines;
+                executeQuery(query, conHive, writer);
+
+                query = "INSERT overwrite table sharkdb.data0_" + lines +
+                        " SELECT" +
+                        " id" +
+                        " from sharkdb.data" + lines;
+                executeQuery(query, conShark, writer);
+
+
+                // ORDER BY
+//                query = "SELECT * FROM hivedb.data" + lines + " ORDER BY house_id, household_id, plug_id, value";
+                query = "SELECT * FROM hivedb.data" + lines + " ORDER BY house_id";
+                executeQuery(query, conHive, writer);
+
+//                query = "SELECT * FROM sharkdb.data" + lines + " ORDER BY house_id, household_id, plug_id, value";
+                query = "SELECT * FROM sharkdb.data" + lines + " ORDER BY house_id";
+                executeQuery(query, conShark, writer);
+
+
+                //FILTER
+                query = "SELECT * FROM hivedb.data" + lines + " WHERE value >= 5";
+                executeQuery(query, conHive, writer);
+
+                query = "SELECT * FROM sharkdb.data" + lines + " WHERE value >= 5";
+                executeQuery(query, conShark, writer);
+
+                //COUNT
+                query = "SELECT COUNT (*) FROM hivedb.data" + lines;
+                executeQuery(query, conHive, writer);
+
+                query = "SELECT COUNT (*) FROM sharkdb.data" + lines;
+                executeQuery(query, conShark, writer);
 
 //                //inner queries
 //                query = "SELECT * FROM hivedb.data" + lines + " WHERE house_id " +
@@ -201,6 +203,28 @@ public class HiveSharkPerformanceEvaluator {
 //                query = "SELECT * FROM sharkdb.data" + lines + " WHERE house_id " +
 //                        "IN (SELECT house_id FROM sharkdb.data" + lines + " WHERE value>5)";
 ////                executeQuery(query, conShark, writer);
+
+
+                //JOIN
+                query = "USE hivedb";
+                executeQuery(query, conHive, writer);
+                query = "SELECT data" + lines + ".*, house" + lines + ".house_name " +
+                        "FROM data" + lines + " " +
+                        "JOIN house" + lines + " " +
+                        "ON ( data" + lines + ".house_id = house" + lines + ".house_id)";
+                executeQuery(query, conHive, writer);
+
+                query = "USE sharkdb";
+                executeQuery(query, conShark, writer);
+                query = "SELECT data" + lines + ".*, house" + lines + ".house_name " +
+                        "FROM data" + lines + " " +
+                        "JOIN house" + lines + " " +
+                        "ON ( data" + lines + ".house_id = house" + lines + ".house_id)";
+                executeQuery(query, conShark, writer);
+
+
+
+
 
 
                 System.out.println("**** FILE WITH " + lines + " LINES: DONE ****");
@@ -225,7 +249,7 @@ public class HiveSharkPerformanceEvaluator {
         long start, end;
         float dur;
 
-        System.out.print(query.substring(0, 20));
+        System.out.print(query);
 
         Statement stmt = null;
         try {
