@@ -37,6 +37,7 @@ public class HiveSharkPerformanceEvaluator {
         //int lineLimits[] = {100};
 
 //        DataReader.createFiles(inFile, outDir, lineLimits);
+//        DataReader.createAdditionalFiles(inFile,outDir1,lineLimits);
 
         try {
             Class.forName(driverName);
@@ -57,7 +58,7 @@ public class HiveSharkPerformanceEvaluator {
 
 
         try {
-            String logPath = "logs/log8.txt";
+            String logPath = "logs/log10.txt";
 
             File f = new File(logPath);
             if (f.exists() && !f.isDirectory()) {
@@ -90,10 +91,10 @@ public class HiveSharkPerformanceEvaluator {
 
                 //**** DDL OPERATIONS **** (Data Definition)
                 //DROP DATABASE
-                query = "drop database if exists hivedb" + lines + " cascade";
+                query = "drop database if exists hivedb cascade";
                 executeQuery(query, conHive, writer);
 
-                query = "drop database if exists sharkdb" + lines + " cascade";
+                query = "drop database if exists sharkdb cascade";
                 executeQuery(query, conShark, writer);
 
 
@@ -221,9 +222,6 @@ public class HiveSharkPerformanceEvaluator {
                         "JOIN house" + lines + " " +
                         "ON ( data" + lines + ".house_id = house" + lines + ".house_id)";
                 executeQuery(query, conShark, writer);
-
-
-
 
 
 
