@@ -1,0 +1,91 @@
+100, 1012.42474, 61.456093, 130.35426, 51.788113, 287.93213, 193.59511, 995.37213, 399.25302, 677.9604, 526.42487, 435.4121, 314.01492, 343.65396, 280.5439, 26.92265, 380.07828, 304.507, 
+1000, 251.92436, 26.874918, 46.13258, 47.79607, 180.54945, 175.3588, 444.9789, 327.70798, 500.25732, 459.06082, 247.59789, 266.86075, 258.64355, 252.70453, 17.589231, 332.5124, 284.75497, 
+10000, 230.11588, 29.662752, 60.5196, 43.734367, 199.04303, 162.95021, 530.6727, 308.37643, 549.4131, 425.77594, 237.1094, 235.21483, 257.24612, 198.81042, 26.791258, 372.29, 288.66412, 
+100000, 254.03777, 26.074575, 28.813234, 38.26808, 188.46861, 175.72672, 696.65875, 329.21426, 1165.8049, 986.1589, 398.4935, 368.6326, 239.57314, 223.62044, 24.140285, 722.01324, 666.8942, 
+1000000, 208.64825, 38.019295, 42.427624, 37.8322, 252.57784, 135.4359, 3600.4836, 257.36398, 8334.48, 6762.232, 1600.991, 1197.1401, 497.54898, 273.4704, 22.308422, 5682.715, 4716.307, 
+[drop database if exists sharkdb cascade
+, create database if not exists sharkdb
+, create table if not exists sharkdb.data100 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data100.txt' overwrite into table sharkdb.data100
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100.txt' overwrite into table sharkdb.house100
+, create table if not exists sharkdb.dataMem100 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.data100
+, create table if not exists sharkdb.houseMem100 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.house100
+, SELECT * FROM sharkdb.data100 ORDER BY house_id
+, SELECT * FROM sharkdb.dataMem100 ORDER BY house_id
+, SELECT * FROM sharkdb.data100 WHERE value >= 5
+, SELECT * FROM sharkdb.dataMem100 WHERE value >= 5
+, SELECT COUNT (*) FROM sharkdb.data100
+, SELECT COUNT (*) FROM sharkdb.dataMem100
+, USE sharkdb
+, SELECT data100.*, house100.house_name FROM data100 JOIN house100 ON ( data100.house_id = house100.house_id)
+, SELECT dataMem100.*, houseMem100.house_name FROM dataMem100 JOIN houseMem100 ON ( dataMem100.house_id = houseMem100.house_id)
+, drop database if exists sharkdb cascade
+, create database if not exists sharkdb
+, create table if not exists sharkdb.data1000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000.txt' overwrite into table sharkdb.data1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000.txt' overwrite into table sharkdb.house1000
+, create table if not exists sharkdb.dataMem1000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.data1000
+, create table if not exists sharkdb.houseMem1000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.house1000
+, SELECT * FROM sharkdb.data1000 ORDER BY house_id
+, SELECT * FROM sharkdb.dataMem1000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000 WHERE value >= 5
+, SELECT * FROM sharkdb.dataMem1000 WHERE value >= 5
+, SELECT COUNT (*) FROM sharkdb.data1000
+, SELECT COUNT (*) FROM sharkdb.dataMem1000
+, USE sharkdb
+, SELECT data1000.*, house1000.house_name FROM data1000 JOIN house1000 ON ( data1000.house_id = house1000.house_id)
+, SELECT dataMem1000.*, houseMem1000.house_name FROM dataMem1000 JOIN houseMem1000 ON ( dataMem1000.house_id = houseMem1000.house_id)
+, drop database if exists sharkdb cascade
+, create database if not exists sharkdb
+, create table if not exists sharkdb.data10000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house10000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data10000.txt' overwrite into table sharkdb.data10000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house10000.txt' overwrite into table sharkdb.house10000
+, create table if not exists sharkdb.dataMem10000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.data10000
+, create table if not exists sharkdb.houseMem10000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.house10000
+, SELECT * FROM sharkdb.data10000 ORDER BY house_id
+, SELECT * FROM sharkdb.dataMem10000 ORDER BY house_id
+, SELECT * FROM sharkdb.data10000 WHERE value >= 5
+, SELECT * FROM sharkdb.dataMem10000 WHERE value >= 5
+, SELECT COUNT (*) FROM sharkdb.data10000
+, SELECT COUNT (*) FROM sharkdb.dataMem10000
+, USE sharkdb
+, SELECT data10000.*, house10000.house_name FROM data10000 JOIN house10000 ON ( data10000.house_id = house10000.house_id)
+, SELECT dataMem10000.*, houseMem10000.house_name FROM dataMem10000 JOIN houseMem10000 ON ( dataMem10000.house_id = houseMem10000.house_id)
+, drop database if exists sharkdb cascade
+, create database if not exists sharkdb
+, create table if not exists sharkdb.data100000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house100000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data100000.txt' overwrite into table sharkdb.data100000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house100000.txt' overwrite into table sharkdb.house100000
+, create table if not exists sharkdb.dataMem100000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.data100000
+, create table if not exists sharkdb.houseMem100000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.house100000
+, SELECT * FROM sharkdb.data100000 ORDER BY house_id
+, SELECT * FROM sharkdb.dataMem100000 ORDER BY house_id
+, SELECT * FROM sharkdb.data100000 WHERE value >= 5
+, SELECT * FROM sharkdb.dataMem100000 WHERE value >= 5
+, SELECT COUNT (*) FROM sharkdb.data100000
+, SELECT COUNT (*) FROM sharkdb.dataMem100000
+, USE sharkdb
+, SELECT data100000.*, house100000.house_name FROM data100000 JOIN house100000 ON ( data100000.house_id = house100000.house_id)
+, SELECT dataMem100000.*, houseMem100000.house_name FROM dataMem100000 JOIN houseMem100000 ON ( dataMem100000.house_id = houseMem100000.house_id)
+, drop database if exists sharkdb cascade
+, create database if not exists sharkdb
+, create table if not exists sharkdb.data1000000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000000.txt' overwrite into table sharkdb.data1000000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000000.txt' overwrite into table sharkdb.house1000000
+, create table if not exists sharkdb.dataMem1000000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.data1000000
+, create table if not exists sharkdb.houseMem1000000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.house1000000
+, SELECT * FROM sharkdb.data1000000 ORDER BY house_id
+, SELECT * FROM sharkdb.dataMem1000000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000000 WHERE value >= 5
+, SELECT * FROM sharkdb.dataMem1000000 WHERE value >= 5
+, SELECT COUNT (*) FROM sharkdb.data1000000
+, SELECT COUNT (*) FROM sharkdb.dataMem1000000
+, USE sharkdb
+, SELECT data1000000.*, house1000000.house_name FROM data1000000 JOIN house1000000 ON ( data1000000.house_id = house1000000.house_id)
+, SELECT dataMem1000000.*, houseMem1000000.house_name FROM dataMem1000000 JOIN houseMem1000000 ON ( dataMem1000000.house_id = houseMem1000000.house_id)
+]
