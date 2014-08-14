@@ -1,0 +1,16 @@
+1000, 162.00136, 22.847883, 48.8378, 49.63262, 177.54376, 197.07219, 561.0527, 428.81903, 766.4683, 573.88763, 458.34116, 282.20093, 337.04492, 246.74664, 
+[drop database if exists sharkdb cascade
+, create database if not exists sharkdb
+, create table if not exists sharkdb.data1000 (id bigint, time_stamp int, value float, measure_type boolean, plug_id int, household_id int, house_id int ) row format delimited FIELDS TERMINATED BY ','
+, create table if not exists sharkdb.house1000 (house_id int, house_name string) row format delimited FIELDS TERMINATED BY ','
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/data/data1000.txt' overwrite into table sharkdb.data1000
+, LOAD DATA local INPATH 'file:///home/niranda/projects/hiveToShark/data/additional/house1000.txt' overwrite into table sharkdb.house1000
+, create table if not exists sharkdb.dataMem1000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.data1000
+, create table if not exists sharkdb.houseMem1000 TBLPROPERTIES ("shark.cache" = "true") AS SELECT * FROM sharkdb.house1000
+, SELECT * FROM sharkdb.data1000 ORDER BY house_id
+, SELECT * FROM sharkdb.dataMem1000 ORDER BY house_id
+, SELECT * FROM sharkdb.data1000 WHERE value >= 5
+, SELECT * FROM sharkdb.dataMem1000 WHERE value >= 5
+, SELECT COUNT (*) FROM sharkdb.data1000
+, SELECT COUNT (*) FROM sharkdb.dataMem1000
+]
