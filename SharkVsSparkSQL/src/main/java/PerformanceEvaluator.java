@@ -10,8 +10,10 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.api.java.JavaSQLContext;
 import org.apache.spark.sql.api.java.JavaSchemaRDD;
 import org.apache.spark.sql.api.java.Row;
+import org.apache.spark.sql.hive.api.java.JavaHiveContext;
 
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * id â€“ a unique identifier of the measurement [64 bit unsigned integer value]
@@ -29,19 +31,24 @@ public class PerformanceEvaluator {
         long start, end;
         TimingCalc timer = new TimingCalc();
 
-        String textFilePath = "/home/niranda/projects/hiveToShark/data/data/data1000.txt";
+        String textFilePath = "/home/niranda/projects/hiveToShark/data/data/data1000000.txt";
+        String textFileDir = "";
+        int lineLimits[] = {100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
+
 
         SparkConf sparkConf = new SparkConf().setAppName("JavaSparkSQL")
-                .setMaster("local[4]")//"spark://niranda-ThinkPad-T540p:7077"
+                .setMaster("local[8]")//"spark://niranda-ThinkPad-T540p:7077"
                 .setSparkHome("/home/niranda/software/spark-1.0.1-bin-hadoop1");
         JavaSparkContext ctx = new JavaSparkContext(sparkConf);
-        JavaSQLContext sqlCtx = new JavaSQLContext(ctx);
-
-        QueryExecutor executor = new QueryExecutor(sqlCtx);
 
 
-        System.out.println("=== Data source: RDD ===");
+//        JavaSQLContext sqlCtx = new JavaSQLContext(ctx);
+//        QueryExecutor executor = new QueryExecutor(sqlCtx);
 
+        JavaHiveContext hiveCtx = new JavaHiveContext(ctx);
+        QueryExecutorHive executorHive = new QueryExecutorHive(hiveCtx);
+
+        System.out.println("=== Data source: RDD === Start");
         start = System.nanoTime();
         JavaRDD<DebsEvent> events;
         events = ctx.textFile(textFilePath).map(
@@ -65,36 +72,56 @@ public class PerformanceEvaluator {
                 });
         end = System.nanoTime();
         long numberOfEvents = events.count();
-
-        System.out.println("=== Data source: RDD ===" +
+        System.out.println("=== Data source: RDD === End" +
                 " Events: " + numberOfEvents +
                 " Time: " + timer.getTimeInMilli(start, end) + " ms");
 
-        JavaSchemaRDD schemaEvents = sqlCtx.applySchema(events, DebsEvent.class);
-        schemaEvents.registerAsTable("events" + numberOfEvents);
-        System.out.println(schemaEvents.toString());
+//        JavaSchemaRDD schemaEvents = sqlCtx.applySchema(events, DebsEvent.class);
+//        schemaEvents.registerAsTable("events" + numberOfEvents);
+//        System.out.println(schemaEvents.toString());
 
-        executor.setSqlCtx(sqlCtx);
+        JavaSchemaRDD schemaEventsHive = hiveCtx.applySchema(events, DebsEvent.class);
+        schemaEventsHive.registerAsTable("events" + numberOfEvents);
+        System.out.println(schemaEventsHive.toString());
 
-        String query = "SELECT * FROM events" + numberOfEvents + " WHERE value>5";
+//        executor.setSqlCtx(sqlCtx);
+        executorHive.setHiveCtx(hiveCtx);
 
-//        start = System.nanoTime();
-//        JavaSchemaRDD resultRDD = sqlCtx.sql(query);
-//        end = System.nanoTime();
-//
-//        List<String> resultList = resultRDD.map(new Function<Row, String>() {
-//                                                    @Override
-//                                                    public String call(Row row) throws Exception {
-//                                                        return Long.toString(row.getLong(0));
-////                                                        return row.getString(0);
-//                                                    }
-//                                                }
-//        ).collect();
-//        System.out.println("Result: " + resultList.get(0)+ " Size: "+ resultList.size());
-//        System.out.println(query + " Time: " + timer.getTimeInMilli(start, end) + " ms");
+        String query = "SELECT * FROM events" + numberOfEvents + " WHERE houseId > 10";
+//        String query = "CREATE DATABASE testdb1234";
 
+        /*
+        start = System.nanoTime();
+        JavaSchemaRDD resultRDD = sqlCtx.sql(query);
+        end = System.nanoTime();
 
-        JavaSchemaRDD resultRDD = executor.executeQuery(query);
+        List<String> resultList = resultRDD.map(new Function<Row, String>() {
+                                                    @Override
+                                                    public String call(Row row) throws Exception {
+                                                        return Long.toString(row.getLong(0));
+//                                                        return row.getString(0);
+                                                    }
+                                                }
+        ).collect();
+        System.out.println("Result: " + resultList.get(0) + " Size: " + resultList.size());
+        System.out.println(query + " Time: " + timer.getTimeInMilli(start, end) + " ms");
+        */
+
+//        JavaSchemaRDD resultRDD = executor.executeQuery(query);
+        JavaSchemaRDD resultRDD = executorHive.executeQuery(query);
+        printRDDString(resultRDD);
+        System.out.println(executorHive.getQueryString() + " time: " + executorHive.getExecutionTimeInMilli() + " ms");
+
+        Scanner keyboard = new Scanner(System.in);
+        int temp = 1;
+        while (temp != 0) {
+            System.out.println("press 0 to exit!");
+            temp = keyboard.nextInt();
+        }
+        ctx.stop();
+    }
+
+    public static String printRDDString(JavaSchemaRDD resultRDD) {
         List<DebsEvent> resultList = resultRDD.map(new Function<Row, DebsEvent>() {
             @Override
             public DebsEvent call(Row row) throws Exception {
@@ -112,9 +139,7 @@ public class PerformanceEvaluator {
             }
         }).collect();
         System.out.println("Result: " + resultList.get(0).convertToString() + " Size: " + resultList.size());
-        System.out.println(executor.getQueryString() + " time: " + executor.getExecutionTimeInMilli() + " ms");
-
-
+        return resultList.get(0).convertToString();
     }
 
 
