@@ -53,9 +53,10 @@ public class JavaSparkSQL {
     }
 
     public static void main(String[] args) throws Exception {
-        SparkConf sparkConf = new SparkConf().setAppName("JavaSparkSQL");
-        sparkConf.setMaster("local[4]");
-        sparkConf.setSparkHome("/home/niranda/software/spark-1.0.1-bin-hadoop1");
+        SparkConf sparkConf = new SparkConf().setAppName("JavaSparkSQL").setMaster("spark://niranda-ThinkPad-T540p:7077").setSparkHome("/home/niranda/software/spark-1.0.1-bin-hadoop1");
+//        sparkConf.setMaster("local[8]");
+//        sparkConf.setMaster("spark://10.100.5.109:8080/");
+//        sparkConf.setSparkHome("/home/niranda/software/spark-1.0.1-bin-hadoop1");
         JavaSparkContext ctx = new JavaSparkContext(sparkConf);
 //        JavaSparkContext ctx = new JavaSparkContext(
 //                "local[4]",
@@ -66,7 +67,8 @@ public class JavaSparkSQL {
 
         System.out.println("=== Data source: RDD ===");
         // Load a text file and convert each line to a Java Bean.
-        JavaRDD<Person> people = ctx.textFile("src/main/resources/people.txt").map(
+        JavaRDD<Person> people;
+        people = ctx.textFile("src/main/resources/people.txt").map(
                 new Function<String, Person>() {
                     public Person call(String line) throws Exception {
                         String[] parts = line.split(",");
@@ -103,7 +105,8 @@ public class JavaSparkSQL {
         JavaSchemaRDD everyone = sqlCtx.sql("SELECT * FROM people");
         end = System.nanoTime();
         System.out.println(end-start);
-        List<String> allNames = everyone.map(new Function<Row, String>() {
+        List<String> allNames;
+        allNames = everyone.map(new Function<Row, String>() {
             public String call(Row row) {
                 String temp = row.getString(1) + ", " + String.valueOf(row.getInt(0));
                 return temp;

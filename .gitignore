@@ -4,6 +4,10 @@
 target
 *.iml
 data/
+*.docx
+*.odt
+*.xlsx
+*.ods
 
 #netbeans ignore personal stuff
 
