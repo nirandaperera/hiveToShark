@@ -90,22 +90,6 @@ public class PerformanceEvaluator {
         String query = "SELECT * FROM events" + numberOfEvents + " WHERE houseId > 10";
 //        String query = "CREATE DATABASE testdb1234";
 
-        /*
-        start = System.nanoTime();
-        JavaSchemaRDD resultRDD = sqlCtx.sql(query);
-        end = System.nanoTime();
-
-        List<String> resultList = resultRDD.map(new Function<Row, String>() {
-                                                    @Override
-                                                    public String call(Row row) throws Exception {
-                                                        return Long.toString(row.getLong(0));
-//                                                        return row.getString(0);
-                                                    }
-                                                }
-        ).collect();
-        System.out.println("Result: " + resultList.get(0) + " Size: " + resultList.size());
-        System.out.println(query + " Time: " + timer.getTimeInMilli(start, end) + " ms");
-        */
 
 //        JavaSchemaRDD resultRDD = executor.executeQuery(query);
         JavaSchemaRDD resultRDD = executorHive.executeQuery(query);
@@ -141,6 +125,24 @@ public class PerformanceEvaluator {
         System.out.println("Result: " + resultList.get(0).convertToString() + " Size: " + resultList.size());
         return resultList.get(0).convertToString();
     }
+
+
+        /*
+        start = System.nanoTime();
+        JavaSchemaRDD resultRDD = sqlCtx.sql(query);
+        end = System.nanoTime();
+
+        List<String> resultList = resultRDD.map(new Function<Row, String>() {
+                                                    @Override
+                                                    public String call(Row row) throws Exception {
+                                                        return Long.toString(row.getLong(0));
+//                                                        return row.getString(0);
+                                                    }
+                                                }
+        ).collect();
+        System.out.println("Result: " + resultList.get(0) + " Size: " + resultList.size());
+        System.out.println(query + " Time: " + timer.getTimeInMilli(start, end) + " ms");
+        */
 
 
 }
